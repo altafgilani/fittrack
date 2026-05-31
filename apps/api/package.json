@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "db:migrate": "prisma migrate dev",
+    "build": "prisma generate && tsc",
+    "start": "prisma db push --accept-data-loss --skip-generate && node dist/index.js",
+    "db:push": "prisma db push",
     "db:generate": "prisma generate",
     "db:seed": "tsx src/seed.ts"
   },

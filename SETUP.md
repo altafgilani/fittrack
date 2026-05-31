@@ -2,6 +2,7 @@
 
 ## Prerequisites
 - Node.js 18+
+- Docker (for a local PostgreSQL database) — or any Postgres you can point at
 - An Anthropic API key (for food photo analysis)
 
 ## 1. Install dependencies
@@ -10,25 +11,33 @@
 npm install
 ```
 
-## 2. Configure the API
+## 2. Start a local database
+
+```bash
+docker compose up -d
+```
+
+This runs Postgres on `localhost:5432` with user/password/db all `fittrack`.
+
+## 3. Configure the API
 
 ```bash
 cd apps/api
 cp .env.example .env
 ```
 
-Edit `apps/api/.env`:
+The default `DATABASE_URL` already matches the docker-compose Postgres. Then:
 - Set `ANTHROPIC_API_KEY` to your key from https://console.anthropic.com
 - Set `SESSION_SECRET` to a long random string
 
-## 3. Initialize the database
+## 4. Create the database tables
 
 ```bash
 cd apps/api
-npx prisma migrate dev --name init
+npx prisma db push
 ```
 
-## 4. Run the app
+## 5. Run the app
 
 From the root:
 ```bash

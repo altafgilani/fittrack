@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { Dumbbell, Target, UtensilsCrossed, LayoutDashboard, LogOut, Menu, X } from "lucide-react";
+import { Dumbbell, Target, UtensilsCrossed, LayoutDashboard, LogOut, Menu } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { cn } from "../lib/utils";

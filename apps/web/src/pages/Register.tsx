@@ -5,7 +5,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { Dumbbell } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { Input } from "../components/ui/Input";
-import { Button } from "../components/ui/Button";
 import { useState } from "react";
 
 const schema = z.object({

@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: fittrack
+    runtime: node
+    plan: free
+    # --include=dev forces devDependencies (vite, tsc, prisma) to install even
+    # though NODE_ENV=production is set on the service.
+    buildCommand: npm install --include=dev && npm run build
+    startCommand: npm run start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: fittrack-db
+          property: connectionString
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+databases:
+  - name: fittrack-db
+    plan: free
+    databaseName: fittrack
+    user: fittrack
