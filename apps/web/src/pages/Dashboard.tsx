@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Flame, Dumbbell, Target, TrendingUp } from "lucide-react";
+import { Flame, Dumbbell, Target, TrendingUp, Plus, ArrowRight } from "lucide-react";
 import { api } from "../lib/api";
 import { Card, CardBody, CardHeader } from "../components/ui/Card";
 import { useAuth } from "../contexts/AuthContext";
@@ -37,11 +37,33 @@ export function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">
-          Good {getTimeOfDay()}, {user?.name?.split(" ")[0]}
-        </h1>
-        <p className="text-gray-500 text-sm mt-1">Here's your fitness overview for today.</p>
+      <div className="flex items-start justify-between flex-wrap gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Good {getTimeOfDay()}, {user?.name?.split(" ")[0]}
+          </h1>
+          <p className="text-gray-500 text-sm mt-1">Here's your fitness overview for today.</p>
+        </div>
+        <div className="flex gap-2 flex-wrap">
+          <Link
+            to="/workouts"
+            className="inline-flex items-center gap-2 bg-emerald-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors"
+          >
+            <Plus size={16} /> Log workout
+          </Link>
+          <Link
+            to="/goals"
+            className="inline-flex items-center gap-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <Target size={16} /> Set goal
+          </Link>
+          <Link
+            to="/food"
+            className="inline-flex items-center gap-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <ArrowRight size={16} /> Log food
+          </Link>
+        </div>
       </div>
 
       {/* Stats row */}
@@ -171,7 +193,7 @@ function StatCard({
   value,
   sub,
 }: {
-  icon: React.ReactNode;
+  icon: ReactNode;
   label: string;
   value: string;
   sub: string;

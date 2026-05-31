@@ -70,9 +70,14 @@ export function Login() {
               error={errors.password?.message}
               {...register("password")}
             />
-            <Button type="submit" className="w-full" disabled={isSubmitting} size="lg">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              style={{ backgroundColor: "#059669", color: "#fff" }}
+              className="w-full py-3 text-sm font-medium rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+            >
               {isSubmitting ? "Signing in..." : "Sign in"}
-            </Button>
+            </button>
           </form>
 
           <p className="mt-4 text-center text-sm text-gray-500">

@@ -100,9 +100,13 @@ export function Goals() {
           <h1 className="text-2xl font-bold text-gray-900">Goals</h1>
           <p className="text-sm text-gray-500 mt-1">{active.length} active · {completed.length} completed</p>
         </div>
-        <Button onClick={() => setShowForm(!showForm)}>
+        <button
+          onClick={() => setShowForm(!showForm)}
+          style={{ backgroundColor: "#059669", color: "#fff" }}
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg hover:opacity-90 transition-opacity"
+        >
           <Plus size={16} /> Set goal
-        </Button>
+        </button>
       </div>
 
       {showForm && (
