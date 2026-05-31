@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: fittrack
+    name: fittrack-altaf
     runtime: node
     plan: free
     # --include=dev forces devDependencies (vite, tsc, prisma) to install even
