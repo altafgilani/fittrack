@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime      @default(now())
+  sessions     Session[]
+  workouts     Workout[]
+  goals        Goal[]
+  foodLogs     FoodLog[]
+  dailyCalories DailyCalorie[]
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Workout {
+  id          String     @id @default(uuid())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  date        DateTime   @default(now())
+  durationMins Int?
+  notes       String?
+  effort      Int?       // 1-10 RPE scale
+  exercises   Exercise[]
+  createdAt   DateTime   @default(now())
+}
+
+model Exercise {
+  id          String  @id @default(uuid())
+  workoutId   String
+  workout     Workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  name        String
+  category    String  // strength | cardio | flexibility
+  sets        Int?
+  reps        Int?
+  weightKg    Float?
+  distanceKm  Float?
+  durationSecs Int?
+  orderIndex  Int     @default(0)
+}
+
+model Goal {
+  id           String    @id @default(uuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title        String
+  type         String    // weight | strength | cardio | body_measurement | habit
+  targetValue  Float
+  currentValue Float     @default(0)
+  unit         String
+  deadline     DateTime?
+  completed    Boolean   @default(false)
+  completedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model FoodLog {
+  id                String   @id @default(uuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date              DateTime @default(now())
+  photoUrl          String?
+  mealType          String   // breakfast | lunch | dinner | snack
+  aiResult          String?  // JSON string of AI analysis
+  confirmedCalories Int
+  confirmedProtein  Float    @default(0)
+  confirmedCarbs    Float    @default(0)
+  confirmedFat      Float    @default(0)
+  notes             String?
+  createdAt         DateTime @default(now())
+}
+
+model DailyCalorie {
+  id               String   @id @default(uuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date             DateTime
+  calorieBudget    Int      @default(2000)
+  caloriesConsumed Int      @default(0)
+  caloriesBurned   Int      @default(0)
+
+  @@unique([userId, date])
+}
