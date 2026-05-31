@@ -13,6 +13,7 @@ model User {
   passwordHash String
   name         String
   createdAt    DateTime      @default(now())
+  onboardedAt  DateTime?
   sessions     Session[]
   workouts     Workout[]
   goals        Goal[]

@@ -39,7 +39,9 @@ router.post("/register", async (req, res) => {
   });
 
   req.session.sessionId = session.id;
-  res.status(201).json({ user: { id: user.id, name: user.name, email: user.email } });
+  res.status(201).json({
+    user: { id: user.id, name: user.name, email: user.email, onboarded: false },
+  });
 });
 
 router.post("/login", async (req, res) => {
@@ -62,7 +64,14 @@ router.post("/login", async (req, res) => {
   });
 
   req.session.sessionId = session.id;
-  res.json({ user: { id: user.id, name: user.name, email: user.email } });
+  res.json({
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      onboarded: user.onboardedAt !== null,
+    },
+  });
 });
 
 router.post("/logout", async (req, res) => {
@@ -92,7 +101,35 @@ router.get("/me", async (req, res) => {
   }
 
   const { user } = session;
-  res.json({ user: { id: user.id, name: user.name, email: user.email } });
+  res.json({
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      onboarded: user.onboardedAt !== null,
+    },
+  });
+});
+
+router.post("/complete-onboarding", async (req, res) => {
+  const sessionId = req.session?.sessionId;
+  if (!sessionId) {
+    res.status(401).json({ error: "Not authenticated" });
+    return;
+  }
+
+  const session = await prisma.session.findUnique({ where: { id: sessionId } });
+  if (!session || session.expiresAt < new Date()) {
+    res.status(401).json({ error: "Session expired" });
+    return;
+  }
+
+  await prisma.user.update({
+    where: { id: session.userId },
+    data: { onboardedAt: new Date() },
+  });
+
+  res.json({ ok: true });
 });
 
 export default router;

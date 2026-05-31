@@ -14,13 +14,24 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
   if (loading) return <div className="flex items-center justify-center h-screen text-gray-400">Loading...</div>;
   if (!user) return <Navigate to="/login" replace />;
+  // First-time users (no goal set yet) must complete the welcome wizard first.
+  if (!user.onboarded) return <Navigate to="/onboarding" replace />;
+  return <>{children}</>;
+}
+
+function OnboardingRoute({ children }: { children: ReactNode }) {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="flex items-center justify-center h-screen text-gray-400">Loading...</div>;
+  if (!user) return <Navigate to="/login" replace />;
+  // Already onboarded — no need to see the wizard again.
+  if (user.onboarded) return <Navigate to="/" replace />;
   return <>{children}</>;
 }
 
 function PublicOnlyRoute({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
   if (loading) return null;
-  if (user) return <Navigate to="/" replace />;
+  if (user) return <Navigate to={user.onboarded ? "/" : "/onboarding"} replace />;
   return <>{children}</>;
 }
 
@@ -29,7 +40,7 @@ function AppRoutes() {
     <Routes>
       <Route path="/login" element={<PublicOnlyRoute><Login /></PublicOnlyRoute>} />
       <Route path="/register" element={<PublicOnlyRoute><Register /></PublicOnlyRoute>} />
-      <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
+      <Route path="/onboarding" element={<OnboardingRoute><Onboarding /></OnboardingRoute>} />
       <Route
         element={
           <ProtectedRoute>

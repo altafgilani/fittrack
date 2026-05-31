@@ -33,7 +33,7 @@ const defaultCalories: Record<FitnessGoalType, string> = {
 };
 
 export function Onboarding() {
-  const { user, clearNewUser } = useAuth();
+  const { user, completeOnboarding } = useAuth();
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -107,9 +107,17 @@ export function Onboarding() {
         });
       }
 
+      // A first goal is required to finish onboarding.
+      if (goalsToCreate.length === 0) {
+        alert("Please pick a goal before continuing.");
+        setStep(1);
+        setSaving(false);
+        return;
+      }
+
       await Promise.all(goalsToCreate.map((g) => api.post("/goals", g)));
 
-      clearNewUser();
+      await completeOnboarding();
       navigate("/");
     } finally {
       setSaving(false);

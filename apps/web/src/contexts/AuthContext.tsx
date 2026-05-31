@@ -5,16 +5,16 @@ interface User {
   id: string;
   name: string;
   email: string;
+  onboarded: boolean;
 }
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  isNewUser: boolean;
-  clearNewUser: () => void;
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  completeOnboarding: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -22,7 +22,6 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isNewUser, setIsNewUser] = useState(false);
 
   useEffect(() => {
     api
@@ -40,19 +39,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (name: string, email: string, password: string) => {
     const { user } = await api.post<{ user: User }>("/auth/register", { name, email, password });
     setUser(user);
-    setIsNewUser(true);
   };
-
-  const clearNewUser = () => setIsNewUser(false);
 
   const logout = async () => {
     await api.post("/auth/logout", {});
     setUser(null);
-    setIsNewUser(false);
+  };
+
+  const completeOnboarding = async () => {
+    await api.post("/auth/complete-onboarding", {});
+    setUser((u) => (u ? { ...u, onboarded: true } : u));
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, isNewUser, clearNewUser, login, register, logout }}>
+    <AuthContext.Provider
+      value={{ user, loading, login, register, logout, completeOnboarding }}
+    >
       {children}
     </AuthContext.Provider>
   );
